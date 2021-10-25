@@ -1,5 +1,6 @@
 package com.te.employeemanagementsystem.operations.update;
 
+import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -10,6 +11,7 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 
+import com.te.employeemanagementsystem.bean.LoginInfo;
 import com.te.employeemanagementsystem.exceptions.InvalidSelectionException;
 import com.te.employeemanagementsystem.exceptions.PasswordMismatchException;
 
@@ -37,6 +39,18 @@ public class UpdatePassword{
 		EntityManager em = emf.createEntityManager();
 		EntityTransaction et = em.getTransaction();
 		et.begin();
+		String qry1 = "from LoginInfo where id = " + id;
+		Query query1 = em.createQuery(qry1);
+		
+		List<LoginInfo> list = query1.getResultList();
+		
+		String oldPasswordDb = list.get(0).getPassword();
+		
+		System.out.println("\nEnter Old Password : ");
+		String oldPassword = sc.next();
+		if( ! oldPassword.equals(oldPasswordDb)) {
+			throw new PasswordMismatchException("Wrong Password!!!");
+		}
 		String qry = "update LoginInfo set password = :val where id = " + id;
 		Query query = em.createQuery(qry);
 		System.out.println("\nEnter New Password : ");

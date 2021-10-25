@@ -12,11 +12,14 @@ import javax.persistence.Persistence;
 import com.te.employeemanagementsystem.bean.Info;
 import com.te.employeemanagementsystem.bean.LoginInfo;
 import com.te.employeemanagementsystem.exceptions.RegistrationFailedException;
+import com.te.employeemanagementsystem.home.HomePage;
 
 public final class Register {
 	
 	public static void registerNewEmployee(Scanner sc) {
-		System.out.println("\nRegister Menu");
+		System.out.println("\n"+ HomePage.CONSTANT);
+		System.out.println("|\t\tRegister Menu\t\t\t\t|");
+		System.out.println(HomePage.CONSTANT);
 		try {
 			registerInfo(sc);
 		} catch (RegistrationFailedException e) {

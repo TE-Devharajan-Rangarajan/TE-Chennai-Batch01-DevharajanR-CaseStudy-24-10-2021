@@ -5,7 +5,7 @@ import java.util.Scanner;
 import com.te.employeemanagementsystem.exceptions.InvalidCredentialsException;
 import com.te.employeemanagementsystem.exceptions.InvalidSelectionException;
 import com.te.employeemanagementsystem.login.Login;
-import com.te.employeemanagementsystem.operations.showdetails.ShowDetails;
+import com.te.employeemanagementsystem.operations.showdetails.ShowDetails;import com.te.employeemanagementsystem.register.Ensure;
 import com.te.employeemanagementsystem.register.Register;
 
 public class HomePage {
@@ -30,14 +30,18 @@ public class HomePage {
 			System.out.println("|\t\t\t3. Guest\t\t\t|");
 			System.out.println(CONSTANT);
 			System.out.println("\nEnter your Choice : ");
-			selection = Integer.parseInt(sc.next());
-
-			try {
-				switchSelection(selection);
-				continueAgain();
-			} catch (InvalidSelectionException e) {
-				System.out.println();
-				System.out.println(e.getMessage());
+			ch = sc.next();
+			if(Ensure.isNumber(ch)) {
+				selection = Integer.parseInt(ch);
+				try {
+					switchSelection(selection);
+					continueAgain();
+				} catch (InvalidSelectionException e) {
+					System.out.println();
+					System.out.println(e.getMessage());
+				}
+			}else {
+				System.out.println("Please enter a number from the list!!!");
 			}
 		}
 		sc.close();

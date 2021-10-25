@@ -63,7 +63,6 @@ public class FindRecord {
 		System.out.println("Enter the value:");
 		value = sc.next();
 		if( ! checkValue()) {
-			sc.close();
 			throw new InvalidDataEnteredException("Invalid Value!!!!");
 		}
 		printResult();

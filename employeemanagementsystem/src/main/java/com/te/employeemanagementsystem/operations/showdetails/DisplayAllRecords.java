@@ -13,6 +13,8 @@ import com.te.employeemanagementsystem.bean.Info;
 import com.te.employeemanagementsystem.operations.PrintTable;
 
 public class DisplayAllRecords {
+	private DisplayAllRecords() {}
+	
 	public static void displayAllRecords() {
 		Logger.getLogger("org.hibernate").setLevel(Level.SEVERE);
 		EntityManagerFactory emf = Persistence.createEntityManagerFactory("logininfo");

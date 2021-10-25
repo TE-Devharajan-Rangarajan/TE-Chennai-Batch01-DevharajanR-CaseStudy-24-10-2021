@@ -5,15 +5,18 @@ import java.util.Scanner;
 
 import com.te.employeemanagementsystem.bean.LoginInfo;
 import com.te.employeemanagementsystem.exceptions.InvalidSelectionException;
+import com.te.employeemanagementsystem.exceptions.NotAValidNumberException;
 import com.te.employeemanagementsystem.home.HomePage;
 import com.te.employeemanagementsystem.operations.delete.DeleteInfo;
 import com.te.employeemanagementsystem.operations.showdetails.ShowDetails;
 import com.te.employeemanagementsystem.operations.update.UpdateInfo;
+import com.te.employeemanagementsystem.register.Ensure;
 
 public class Operations {
 	static String ch = null;
 	static int flagDelete = 0;
 	static int flag = 0;
+	static int selection = 0;
 
 	public static void operationsLoop(LoginInfo loginInfo, Scanner sc) {
 		flag = 0;
@@ -34,7 +37,7 @@ public class Operations {
 				} else {
 					throw new InvalidSelectionException("Invalid Selection!!!");
 				}
-			} catch (InvalidSelectionException e) {
+			} catch (InvalidSelectionException | NotAValidNumberException e) {
 				System.out.println();
 				System.out.println(e.getMessage());
 			}
@@ -43,7 +46,7 @@ public class Operations {
 
 	}
 
-	public static void operations(LoginInfo loginInfo, Scanner sc) throws InvalidSelectionException {
+	public static void operations(LoginInfo loginInfo, Scanner sc) throws InvalidSelectionException, NotAValidNumberException {
 		System.out.println();
 		System.out.println(HomePage.CONSTANT);
 		System.out.println("|\t\t\tOperations Page\t\t\t|");
@@ -54,8 +57,13 @@ public class Operations {
 		System.out.println(HomePage.CONSTANT);
 		
 		System.out.println("\nEnter your Choice : ");
-
-		int selection = Integer.parseInt(sc.next());
+		ch = sc.next();
+		if(Ensure.isNumber(ch)) {
+			selection = Integer.parseInt(ch);
+			
+		}else {
+			throw new NotAValidNumberException("Not a valid Number");
+		}
 		switch (selection) {
 		case 1:
 			ShowDetails.showDetails(sc);
