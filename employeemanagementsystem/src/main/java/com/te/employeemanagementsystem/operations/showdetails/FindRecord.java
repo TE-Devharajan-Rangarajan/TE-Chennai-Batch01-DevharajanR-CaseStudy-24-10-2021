@@ -15,22 +15,23 @@ import javax.persistence.Query;
 import com.te.employeemanagementsystem.bean.Info;
 import com.te.employeemanagementsystem.exceptions.InvalidDataEnteredException;
 import com.te.employeemanagementsystem.exceptions.InvalidSelectionException;
+import com.te.employeemanagementsystem.home.HomePage;
 import com.te.employeemanagementsystem.operations.PrintTable;
 import com.te.employeemanagementsystem.register.Ensure;
 
 public class FindRecord {
 
-	public static String columnName = null;
-	public static String value = null;
-	public static int selection=0;
-	public static String[] selectionName = { "0", "id", "firstName", "lastName", "dob", "gender", "salary", "role", "mobile",
+	protected static String columnName = null;
+	protected static String value = null;
+	protected static int selection=0;
+	static String[] selectionName = { "0", "id", "firstName", "lastName", "dob", "gender", "salary", "role", "mobile",
 			"email", "bloodGroup" };
 		
 	public void findRecord(Scanner sc) {
 		
-		System.out.println("+-------------------------------------------------------+");
+		System.out.println(HomePage.CONSTANT);
 		System.out.println("|\tChoose the filter for your search!!!\t\t|");
-		System.out.println("+-------------------------------------------------------+");
+		System.out.println(HomePage.CONSTANT);
 		System.out.println("|\t\t1. Id\t\t\t\t\t|");
 		System.out.println("|\t\t2. First Name\t\t\t\t|");
 		System.out.println("|\t\t3. Last Name\t\t\t\t|");
@@ -41,7 +42,7 @@ public class FindRecord {
 		System.out.println("|\t\t8. Mobile Number\t\t\t|");
 		System.out.println("|\t\t9. Email Address\t\t\t|");
 		System.out.println("|\t\t10. Blood Group\t\t\t\t|");
-		System.out.println("+-------------------------------------------------------+");
+		System.out.println(HomePage.CONSTANT);
 		
 		selection = Integer.parseInt(sc.next());
 		try {

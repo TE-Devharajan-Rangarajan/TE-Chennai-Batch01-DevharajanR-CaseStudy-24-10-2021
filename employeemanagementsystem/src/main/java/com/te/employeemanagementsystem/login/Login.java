@@ -12,18 +12,30 @@ import javax.persistence.Query;
 
 import com.te.employeemanagementsystem.bean.LoginInfo;
 import com.te.employeemanagementsystem.exceptions.InvalidCredentialsException;
+import com.te.employeemanagementsystem.exceptions.InvalidDataEnteredException;
 import com.te.employeemanagementsystem.home.HomePage;
 import com.te.employeemanagementsystem.operations.Operations;
+import com.te.employeemanagementsystem.register.Ensure;
 
 public class Login {	
 	
-	public static void login(Scanner sc) throws InvalidCredentialsException {
+	private Login() {}
+	
+	static String data = null;
+	
+	public static void login(Scanner sc) throws InvalidCredentialsException, InvalidDataEnteredException {
 		LoginInfo loginInfo = new LoginInfo();
 		System.out.println(HomePage.CONSTANT);
 		System.out.println("|\t\t\tLogin Page\t\t\t|");
 		System.out.println(HomePage.CONSTANT);
 		System.out.println("\nEnter your ID : ");
-		loginInfo.setId(Integer.parseInt(sc.next()));
+		data = sc.next();
+		if(Ensure.isNumber(data)) {
+			
+			loginInfo.setId(Integer.parseInt(data));
+		}else {
+			throw new InvalidDataEnteredException("Not an Employee Number!!!");
+		}
 		System.out.println("\nEnter your Password : ");
 		loginInfo.setPassword(sc.next());
 		if (checkLogin(loginInfo)) {

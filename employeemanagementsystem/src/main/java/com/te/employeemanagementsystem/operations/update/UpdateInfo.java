@@ -14,16 +14,19 @@ import javax.persistence.Query;
 import com.te.employeemanagementsystem.bean.LoginInfo;
 import com.te.employeemanagementsystem.exceptions.InvalidDataEnteredException;
 import com.te.employeemanagementsystem.exceptions.InvalidSelectionException;
+import com.te.employeemanagementsystem.exceptions.NotAValidNumberException;
 import com.te.employeemanagementsystem.exceptions.PasswordMismatchException;
 import com.te.employeemanagementsystem.home.HomePage;
 import com.te.employeemanagementsystem.operations.showdetails.FindRecord;
+import com.te.employeemanagementsystem.register.Ensure;
 
 public class UpdateInfo extends FindRecord {
 
 	public static int id;
+	static String ch = null;
 	
 
-	public void updateRecord(LoginInfo loginInfo, Scanner sc) {
+	public void updateRecord(LoginInfo loginInfo, Scanner sc) throws NotAValidNumberException {
 		
 		id = loginInfo.getId();
 		
@@ -42,8 +45,14 @@ public class UpdateInfo extends FindRecord {
 		System.out.println("|\t\t9. Email Address\t\t\t|");
 		System.out.println("|\t\t10. Blood Group\t\t\t\t|");
 		System.out.println(HomePage.CONSTANT);
-
-		selection = Integer.parseInt(sc.next());
+		
+		System.out.println("\nEnter your choice : ");
+		ch = sc.next();
+		if(Ensure.isNumber(ch)) {
+			selection = Integer.parseInt(ch);			
+		}else {
+			throw new NotAValidNumberException("Please Enter a number from Selection!!!");
+		}
 		try {
 			if (selection == 1) {
 				new UpdatePassword().confirmPassowrdUpdate(id, sc);

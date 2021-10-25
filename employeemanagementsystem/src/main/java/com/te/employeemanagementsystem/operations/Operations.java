@@ -18,7 +18,7 @@ public class Operations {
 	static int flag = 0;
 	static int selection = 0;
 
-	public static void operationsLoop(LoginInfo loginInfo, Scanner sc) {
+	public static void operationsLoop(LoginInfo loginInfo, Scanner sc) {		
 		flag = 0;
 		flagDelete = 0;
 		while (flag != 1) {
@@ -54,6 +54,7 @@ public class Operations {
 		System.out.println("|\t\t1. Search employee information\t\t|");
 		System.out.println("|\t\t2. Update your information\t\t|");
 		System.out.println("|\t\t3. Delete your information\t\t|");
+		System.out.println("|\t\t4. Exit\t\t\t\t\t|");
 		System.out.println(HomePage.CONSTANT);
 		
 		System.out.println("\nEnter your Choice : ");
@@ -74,6 +75,10 @@ public class Operations {
 		case 3:
 			DeleteInfo.confirmDelete(loginInfo, sc);
 			flagDelete = 1;
+			break;
+		case 4:
+			System.out.println("\nSee you again... Have a nice day!!!");
+			System.exit(0);
 			break;
 		default:
 			throw new InvalidSelectionException("Invalid Selection!!!");

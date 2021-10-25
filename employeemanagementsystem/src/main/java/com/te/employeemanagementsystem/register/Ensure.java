@@ -5,11 +5,19 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.Query;
+
 import com.te.employeemanagementsystem.bean.Info;
+import com.te.employeemanagementsystem.bean.LoginInfo;
 import com.te.employeemanagementsystem.exceptions.ColumnConditionFailedException;
+import com.te.employeemanagementsystem.exceptions.EmployeeAlreadyExistsException;
 import com.te.employeemanagementsystem.exceptions.IllegalDateException;
 import com.te.employeemanagementsystem.exceptions.NotAValidNumberException;
 import com.te.employeemanagementsystem.exceptions.NotLegalToWorkException;
@@ -35,7 +43,7 @@ public final class Ensure {
 			setId(Integer.parseInt(str));
 			info.setId(getId());
 
-		} catch (ColumnConditionFailedException | NotAValidNumberException e) {
+		} catch (ColumnConditionFailedException | NotAValidNumberException | EmployeeAlreadyExistsException e) {
 			System.out.println(e.getMessage());
 			return null;
 		}
@@ -98,9 +106,21 @@ public final class Ensure {
 		return info;
 	}
 
-	public static void ensureId(String str) throws ColumnConditionFailedException, NotAValidNumberException {
+	public static void ensureId(String str) throws ColumnConditionFailedException, NotAValidNumberException, EmployeeAlreadyExistsException {
 		if (isNumber(str)) {
-			if (Integer.parseInt(str) > 0) {
+			int id = Integer.parseInt(str);
+			if (id > 0) {
+				EntityManagerFactory emf = Persistence.createEntityManagerFactory("logininfo");
+				EntityManager em = emf.createEntityManager();
+				String query = "from LoginInfo where id = " + id;
+				Query qry = em.createQuery(query);
+				List<LoginInfo> list = qry.getResultList();
+				if(list.isEmpty()) {
+					
+				}else {
+					throw new EmployeeAlreadyExistsException("Employee Already Exists for the ID entered!!!");
+				}
+				
 			} else {
 				throw new ColumnConditionFailedException("Invalid ID!!!");
 			}

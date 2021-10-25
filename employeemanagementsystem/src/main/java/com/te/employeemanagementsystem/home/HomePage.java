@@ -3,6 +3,7 @@ package com.te.employeemanagementsystem.home;
 import java.util.Scanner;
 
 import com.te.employeemanagementsystem.exceptions.InvalidCredentialsException;
+import com.te.employeemanagementsystem.exceptions.InvalidDataEnteredException;
 import com.te.employeemanagementsystem.exceptions.InvalidSelectionException;
 import com.te.employeemanagementsystem.login.Login;
 import com.te.employeemanagementsystem.operations.showdetails.ShowDetails;import com.te.employeemanagementsystem.register.Ensure;
@@ -28,6 +29,7 @@ public class HomePage {
 			System.out.println("|\t\t\t1. Login\t\t\t|");
 			System.out.println("|\t\t\t2. Register\t\t\t|");
 			System.out.println("|\t\t\t3. Guest\t\t\t|");
+			System.out.println("|\t\t\t4. Exit\t\t\t\t|");
 			System.out.println(CONSTANT);
 			System.out.println("\nEnter your Choice : ");
 			ch = sc.next();
@@ -35,7 +37,7 @@ public class HomePage {
 				selection = Integer.parseInt(ch);
 				try {
 					switchSelection(selection);
-					continueAgain();
+					//continueAgain();
 				} catch (InvalidSelectionException e) {
 					System.out.println();
 					System.out.println(e.getMessage());
@@ -55,7 +57,7 @@ public class HomePage {
 		case 1:
 			try {
 				Login.login(sc);
-			} catch (InvalidCredentialsException e) {
+			} catch (InvalidCredentialsException | InvalidDataEnteredException e) {
 				System.out.println();
 				System.out.println(e.getMessage());
 			}
@@ -65,6 +67,10 @@ public class HomePage {
 			break;
 		case 3:
 			ShowDetails.showDetails(sc);
+			break;
+		case 4:
+			System.out.println("\nSee you again... Have a nice day!!!");
+			System.exit(0);
 			break;
 		default:
 			throw new InvalidSelectionException("Invalid Selection!!!");
