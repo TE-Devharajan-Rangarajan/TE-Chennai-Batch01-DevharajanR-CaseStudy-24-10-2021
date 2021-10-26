@@ -12,17 +12,26 @@ import lombok.Data;
 @Entity
 @Table(name = "logininfo")
 @Data
-public class LoginInfo implements Serializable{
+public class LoginInfo implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	public LoginInfo() {}
+
+	public LoginInfo() {
+		
+		/**
+		 * This is a Entity class constructor
+		 */
+		
+	}
+
 	@Column
 	@Id
 	private Integer id;
+	
 	@Column
 	private String password;
-	
+
 }

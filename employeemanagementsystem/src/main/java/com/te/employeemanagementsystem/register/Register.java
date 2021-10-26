@@ -1,13 +1,9 @@
 package com.te.employeemanagementsystem.register;
 
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
 
 import com.te.employeemanagementsystem.bean.Info;
 import com.te.employeemanagementsystem.bean.LoginInfo;
@@ -15,52 +11,63 @@ import com.te.employeemanagementsystem.exceptions.RegistrationFailedException;
 import com.te.employeemanagementsystem.home.HomePage;
 
 public final class Register {
-	
-	public static void registerNewEmployee(Scanner sc) {
-		System.out.println("\n"+ HomePage.CONSTANT);
-		System.out.println("|\t\tRegister Menu\t\t\t\t|");
-		System.out.println(HomePage.CONSTANT);
-		try {
-			registerInfo(sc);
-		} catch (RegistrationFailedException e) {
-			System.out.println(e.getMessage());
-		}
+
+	private Register() {
+
 	}
 
-	public static void registerInfo(Scanner sc) throws RegistrationFailedException {
+	public static void registerNewEmployee(EntityManager em, EntityTransaction et, Scanner sc) {
+		
+		System.out.println("\n" + HomePage.CONSTANT);
+		System.out.println("|\t\tRegister Menu\t\t\t\t|");
+		System.out.println(HomePage.CONSTANT);
+		
+		try {
+			
+			registerInfo(em, et, sc);
+		
+		} catch (RegistrationFailedException e) {
+			
+			System.out.println();
+			System.out.println(e.getMessage());
+		
+		}
+	
+	}
 
-		Logger.getLogger("org.hibernate").setLevel(Level.SEVERE);
-		EntityManagerFactory emf = Persistence.createEntityManagerFactory("logininfo");
-		EntityManager em = emf.createEntityManager();
-		EntityTransaction et = em.getTransaction();
-		Info info = Ensure.ensureInfo(sc);
+	public static void registerInfo(EntityManager em, EntityTransaction et, Scanner sc)
+			throws RegistrationFailedException {
+
+		Info info = Ensure.ensureInfo(em, sc);
+		
 		if (info != null) {
 
 			et.begin();
 			em.persist(info);
 			et.commit();
-			registerLoginInfo();
+		
+			registerLoginInfo(em, et);
+		
 		} else {
+			
 			throw new RegistrationFailedException("Registration failed due to incorrect Inputs!!!");
+		
 		}
 
 		System.out.println("Successfully Registered!!!");
-
-		em.close();
-		emf.close();
+	
 	}
 
-	public static void registerLoginInfo() {
-		EntityManagerFactory emf = Persistence.createEntityManagerFactory("logininfo");
-		EntityManager em = emf.createEntityManager();
-		EntityTransaction et = em.getTransaction();
+	public static void registerLoginInfo(EntityManager em, EntityTransaction et) {
+
 		LoginInfo loginInfo = new LoginInfo();
+		
 		loginInfo.setId(Ensure.getId());
 		loginInfo.setPassword(Ensure.getPassword());
+		
 		et.begin();
 		em.persist(loginInfo);
 		et.commit();
-		em.close();
-		emf.close();
+
 	}
 }

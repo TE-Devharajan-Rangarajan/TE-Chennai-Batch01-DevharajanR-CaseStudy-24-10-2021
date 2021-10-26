@@ -1,14 +1,11 @@
 package com.te.employeemanagementsystem.operations.update;
 
 import java.sql.Date;
+import java.util.List;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
 import javax.persistence.Query;
 
 import com.te.employeemanagementsystem.bean.LoginInfo;
@@ -17,20 +14,17 @@ import com.te.employeemanagementsystem.exceptions.InvalidSelectionException;
 import com.te.employeemanagementsystem.exceptions.NotAValidNumberException;
 import com.te.employeemanagementsystem.exceptions.PasswordMismatchException;
 import com.te.employeemanagementsystem.home.HomePage;
+import com.te.employeemanagementsystem.login.Login;
 import com.te.employeemanagementsystem.operations.showdetails.FindRecord;
 import com.te.employeemanagementsystem.register.Ensure;
 
 public class UpdateInfo extends FindRecord {
 
-	public static int id;
 	static String ch = null;
-	
 
-	public void updateRecord(LoginInfo loginInfo, Scanner sc) throws NotAValidNumberException {
-		
-		id = loginInfo.getId();
-		
-		
+	public void updateRecord(LoginInfo loginInfo, EntityManager em, EntityTransaction et, Scanner sc)
+			throws NotAValidNumberException {
+
 		System.out.println(HomePage.CONSTANT);
 		System.out.println("|\t\tChoose data you wish to change!!!\t|");
 		System.out.println(HomePage.CONSTANT);
@@ -45,61 +39,91 @@ public class UpdateInfo extends FindRecord {
 		System.out.println("|\t\t9. Email Address\t\t\t|");
 		System.out.println("|\t\t10. Blood Group\t\t\t\t|");
 		System.out.println(HomePage.CONSTANT);
-		
+
 		System.out.println("\nEnter your choice : ");
+		
 		ch = sc.next();
-		if(Ensure.isNumber(ch)) {
-			selection = Integer.parseInt(ch);			
-		}else {
+		
+		if (Ensure.isNumber(ch)) {
+			
+			selection = Integer.parseInt(ch);
+		
+		} else {
+			
 			throw new NotAValidNumberException("Please Enter a number from Selection!!!");
+		
 		}
 		try {
+			
 			if (selection == 1) {
-				new UpdatePassword().confirmPassowrdUpdate(id, sc);
+				
+				new UpdatePassword().confirmPassowrdUpdate(loginInfo, em, et, sc);
+			
 			} else {
-				findRecordFactory(sc);
+				
+				findRecordFactory(loginInfo, em, et, sc);
+			
 			}
 
 		} catch (InvalidSelectionException | InvalidDataEnteredException | PasswordMismatchException e) {
+			
 			System.out.println(e.getMessage());
+		
 		}
 	}
 
 	@Override
-	public void printResult() {
-		Logger.getLogger("org.hibernate").setLevel(Level.SEVERE);
-		EntityManagerFactory emf = Persistence.createEntityManagerFactory("logininfo");
-		EntityManager em = emf.createEntityManager();
-		EntityTransaction et = em.getTransaction();
+	public void printResult(LoginInfo loginInfo, EntityManager em, EntityTransaction et) {
+
 		et.begin();
-		String qry = "update Info set " + columnName + " = :val where id=" + id;
+		
+		String qry = "update Info set " + columnName + " = :val where id=" + loginInfo.getId();
 		Query query = em.createQuery(qry);
+		
 		switch (selection) {
+		
 		case 4:
 			query.setParameter("val", Date.valueOf(value));
 			break;
+		
 		case 6:
 			query.setParameter("val", Double.parseDouble(value));
 			break;
+		
 		case 8:
 			query.setParameter("val", Long.parseLong(value));
 			break;
+		
 		default:
 			query.setParameter("val", value);
 			break;
+		
 		}
 
 		int res = query.executeUpdate();
-		if (res > 0) {
-			System.out.println("Record updated!!!");
-		} else {
-			System.out.println("Invalid Update!!!");
-		}
+		
 		et.commit();
-		em.close();
-		emf.close();
-	}
+		
+		String qry1 = "from LoginInfo where id = " + loginInfo.getId();
+		Query query1 = em.createQuery(qry1);
+		
+		@SuppressWarnings("unchecked")
+		List<LoginInfo> result = query1.getResultList();
+		
+		Login.loginInfo.setId(result.get(0).getId());
+		Login.loginInfo.setPassword(result.get(0).getPassword());
+		
+		if (res > 0) {
+			
+			System.out.println("Record updated!!!");
+		
+		} else {
+			
+			System.out.println("Invalid Update!!!");
+		
+		}
+		
 
-	
+	}
 
 }
