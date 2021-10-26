@@ -7,9 +7,9 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Locale;
-import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import com.te.employeemanagementsystem.bean.Info;
@@ -20,6 +20,7 @@ import com.te.employeemanagementsystem.exceptions.IllegalDateException;
 import com.te.employeemanagementsystem.exceptions.NotAValidNumberException;
 import com.te.employeemanagementsystem.exceptions.NotLegalToWorkException;
 import com.te.employeemanagementsystem.exceptions.PasswordMismatchException;
+import com.te.employeemanagementsystem.home.EntityClass;
 
 public final class Ensure {
 
@@ -31,32 +32,56 @@ public final class Ensure {
 	static Info info = new Info();
 	private static int id;
 	private static String password;
+	static Pattern p = Pattern.compile("^[A-Za-z]");
+	
 
-	public static Info ensureInfo(EntityManager em, Scanner sc) {
+	public static Info ensureInfo(EntityClass ec) {
 
 		System.out.println("\nEnter Id: ");
-		str = sc.next();
+		str = ec.getSc().next();
 		
 		try {
 			
-			ensureId(str, em);
+			ensureId(str, ec);
 			info.setId(Integer.parseInt(str));
 
 		} catch (ColumnConditionFailedException | NotAValidNumberException | EmployeeAlreadyExistsException e) {
 			
+			System.out.println();
 			System.out.println(e.getMessage());
 			return null;
 		
 		}
 
 		System.out.println("\nEnter First Name: ");
-		info.setFirstName(sc.next());
+		
+		str = ec.getSc().next();
+		
+		try {
+			ensureName(str);
+			info.setFirstName(str);
+		} catch (ColumnConditionFailedException e) {
+			System.out.println();
+			System.out.println(e.getMessage());
+			return null;
+		}
+		
 
 		System.out.println("\nEnter Last Name: ");
-		info.setLastName(sc.next());
 
+		str = ec.getSc().next();
+		
+		try {
+			ensureName(str);
+			info.setLastName(str);
+		} catch (ColumnConditionFailedException e) {
+			System.out.println();
+			System.out.println(e.getMessage());
+			return null;
+		}
+		
 		System.out.println("\nEnter Date Of Birth (YYYY-MM-DD): ");
-		str = sc.next();
+		str = ec.getSc().next();
 		
 		try {
 			
@@ -71,10 +96,10 @@ public final class Ensure {
 		}
 
 		System.out.println("\nEnter Gender: ");
-		info.setGender(sc.next());
+		info.setGender(ec.getSc().next());
 
 		System.out.println("\nEnter Salary:");
-		str = sc.next();
+		str = ec.getSc().next();
 		
 		try {
 			
@@ -89,10 +114,10 @@ public final class Ensure {
 		}
 
 		System.out.println("\nEnter Role: ");
-		info.setRole(sc.next());
+		info.setRole(ec.getSc().next());
 
 		System.out.println("\nEnter Mobile Number: ");
-		str = sc.next();
+		str = ec.getSc().next();
 		
 		try {
 			
@@ -107,14 +132,14 @@ public final class Ensure {
 		}
 
 		System.out.println("\nEnter Email Address: ");
-		info.setEmail(sc.next());
+		info.setEmail(ec.getSc().next());
 
 		System.out.println("\nEnter Blood Group: ");
-		info.setBloodGroup(sc.next());
+		info.setBloodGroup(ec.getSc().next());
 
 		try {
 			
-			ensurePassword(sc);
+			ensurePassword(ec);
 		
 		} catch (PasswordMismatchException e) {
 			
@@ -125,14 +150,14 @@ public final class Ensure {
 		return info;
 	}
 
-	public static void ensureId(String str, EntityManager em)
+	public static void ensureId(String str, EntityClass ec)
 			throws ColumnConditionFailedException, NotAValidNumberException, EmployeeAlreadyExistsException {
 		if (isNumber(str)) {
 
 			if (Integer.parseInt(str) > 0) {
 				
 				String query = "from LoginInfo where id = " + id;
-				Query qry = em.createQuery(query);
+				Query qry = ec.getEm().createQuery(query);
 				
 				@SuppressWarnings("unchecked")
 				List<LoginInfo> list = qry.getResultList();
@@ -209,14 +234,14 @@ public final class Ensure {
 	
 	}
 
-	public static void ensurePassword(Scanner sc) throws PasswordMismatchException {
+	public static void ensurePassword(EntityClass ec) throws PasswordMismatchException {
 		
 		System.out.println("Enter Password:");
-		String pwd = sc.next();
+		String pwd = ec.getSc().next();
 		
 		System.out.println("Re-Enter Password: ");
 		
-		if (pwd.equals(sc.next())) {
+		if (pwd.equals(ec.getSc().next())) {
 			
 			setPassword(pwd);
 		
@@ -271,6 +296,29 @@ public final class Ensure {
 			return false;
 		}
 
+	}
+	
+	public static void ensureName(String str) throws ColumnConditionFailedException {
+		
+		if(isName(str)) {
+			
+		}else {
+			
+			throw new ColumnConditionFailedException("Cannot contain number(s) in Name!!!");
+			
+		}
+		
+	}
+	
+	public static boolean isName(String str) {
+		
+		if(str == null) {
+			return false;
+		}
+		
+		Matcher m = p.matcher(str);
+		return m.matches();
+		
 	}
 
 	public static String getPassword() {

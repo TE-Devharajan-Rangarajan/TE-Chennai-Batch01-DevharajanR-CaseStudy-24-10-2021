@@ -1,13 +1,10 @@
 package com.te.employeemanagementsystem.operations.delete;
 
-import java.util.Scanner;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import javax.persistence.Query;
 
 import com.te.employeemanagementsystem.bean.LoginInfo;
 import com.te.employeemanagementsystem.exceptions.InvalidSelectionException;
+import com.te.employeemanagementsystem.home.EntityClass;
 
 public class DeleteInfo {
 
@@ -15,20 +12,20 @@ public class DeleteInfo {
 	}
 
 
-	public static void confirmDelete(LoginInfo loginInfo, EntityManager em, EntityTransaction et, Scanner sc)
+	public static void confirmDelete(LoginInfo loginInfo, EntityClass ec)
 			throws InvalidSelectionException {
 
 		System.out.println("WARNING :: Please note deleting makes you lose access to the application!!!");
 
 		System.out.println("\nAre you sure you want to delete your information? (Y/N) ");
 
-		String c = sc.next();
+		String c = ec.getSc().next();
 
 		if (c.charAt(0) == 'Y' || c.charAt(0) == 'y') {
 
-			deleteRecord(loginInfo, em, et);
+			deleteRecord(loginInfo, ec);
 
-			deleteLoginRecord(loginInfo, em, et);
+			deleteLoginRecord(loginInfo, ec);
 
 			System.out.println("Deletion Complete!!!");
 
@@ -43,23 +40,23 @@ public class DeleteInfo {
 		}
 	}
 
-	public static void deleteRecord(LoginInfo loginInfo, EntityManager em, EntityTransaction et) {
+	public static void deleteRecord(LoginInfo loginInfo, EntityClass ec) {
 
-		et.begin();
+		ec.getEt().begin();
 		String qry = "delete from Info where id=" + loginInfo.getId();
-		Query query = em.createQuery(qry);
+		Query query = ec.getEm().createQuery(qry);
 		query.executeUpdate();
-		et.commit();
+		ec.getEt().commit();
 
 	}
 
-	public static void deleteLoginRecord(LoginInfo loginInfo, EntityManager em, EntityTransaction et) {
+	public static void deleteLoginRecord(LoginInfo loginInfo, EntityClass ec) {
 
-		et.begin();
+		ec.getEt().begin();
 		String qry = "delete from LoginInfo where id=" + loginInfo.getId();
-		Query query = em.createQuery(qry);
+		Query query = ec.getEm().createQuery(qry);
 		query.executeUpdate();
-		et.commit();
+		ec.getEt().commit();
 
 	}
 

@@ -1,28 +1,25 @@
 package com.te.employeemanagementsystem.operations.update;
 
 import java.util.List;
-import java.util.Scanner;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import javax.persistence.Query;
 
 import com.te.employeemanagementsystem.bean.LoginInfo;
 import com.te.employeemanagementsystem.exceptions.InvalidSelectionException;
 import com.te.employeemanagementsystem.exceptions.PasswordMismatchException;
-import com.te.employeemanagementsystem.login.Login;
+import com.te.employeemanagementsystem.home.EntityClass;
 
 public class UpdatePassword {
 
-	public void confirmPassowrdUpdate(LoginInfo loginInfo, EntityManager em, EntityTransaction et, Scanner sc)
+	public void confirmPassowrdUpdate(LoginInfo loginInfo, EntityClass ec)
 			throws InvalidSelectionException, PasswordMismatchException {
 
 		System.out.println("Are you sure that you want to change your password?(Y/N)");
-		String c = sc.next();
+		String c = ec.getSc().next();
 
 		if (c.charAt(0) == 'Y' || c.charAt(0) == 'y') {
 
-			updatePassword(loginInfo, em, et, sc);
+			updatePassword(loginInfo, ec);
 			System.out.println("\nPassword Changed Successfully!!!");
 
 		} else if (c.charAt(0) == 'N' || c.charAt(0) == 'n') {
@@ -37,13 +34,13 @@ public class UpdatePassword {
 
 	}
 
-	public void updatePassword(LoginInfo loginInfo, EntityManager em, EntityTransaction et, Scanner sc)
+	public void updatePassword(LoginInfo loginInfo, EntityClass ec)
 			throws PasswordMismatchException {
 
-		et.begin();
+		ec.getEt().begin();
 		
 		String qry1 = "from LoginInfo where id = " + loginInfo.getId();
-		Query query1 = em.createQuery(qry1);
+		Query query1 = ec.getEm().createQuery(qry1);
 
 		@SuppressWarnings("unchecked")
 		List<LoginInfo> list = query1.getResultList();
@@ -51,7 +48,7 @@ public class UpdatePassword {
 		String oldPasswordDb = list.get(0).getPassword();
 
 		System.out.println("\nEnter Old Password : ");
-		String oldPassword = sc.next();
+		String oldPassword = ec.getSc().next();
 		
 		if (!oldPassword.equals(oldPasswordDb)) {
 			
@@ -60,13 +57,13 @@ public class UpdatePassword {
 		}
 		
 		String qry = "update LoginInfo set password = :val where id = " + loginInfo.getId();
-		Query query = em.createQuery(qry);
+		Query query = ec.getEm().createQuery(qry);
 		
 		System.out.println("\nEnter New Password : ");
-		String pass = sc.next();
+		String pass = ec.getSc().next();
 		
 		System.out.println("\nRe-Enter New Password : ");
-		String pass1 = sc.next();
+		String pass1 = ec.getSc().next();
 		
 		System.out.println(pass1);
 		
@@ -81,16 +78,35 @@ public class UpdatePassword {
 		
 		}
 		
-		et.commit();
+		ec.getEt().commit();
+		ec.getEm().clear();
 		
-		String qry2 = "from LoginInfo where id = " + loginInfo.getId();
-		Query query2 = em.createQuery(qry2);
 		
-		@SuppressWarnings("unchecked")
-		List<LoginInfo> result = query2.getResultList();
 		
-		Login.loginInfo.setId(result.get(0).getId());
-		Login.loginInfo.setPassword(result.get(0).getPassword());
+		/**
+		 * Below Lies my failed attempts to refresh entities with updated data from database
+		 * before figuring out that clearing the entityManager will do the job
+		 */
+		
+		/*
+		 * for (EntityType<?> entity : ec.getEm().getMetamodel().getEntities()) { try {
+		 * ec.getEm().refresh(entity); System.out.println("Success!!!"); } catch
+		 * (IllegalArgumentException e) { System.out.println("failed"); } }
+		 */
+        		
+		/*
+		 * String qry2 = "from LoginInfo where id = " + loginInfo.getId(); Query query2
+		 * = ec.getEm().createQuery(qry2);
+		 * 
+		 * @SuppressWarnings("unchecked") List<LoginInfo> result =
+		 * query2.getResultList();
+		 * 
+		 * Login.loginInfo.setId(result.get(0).getId());
+		 * Login.loginInfo.setPassword(result.get(0).getPassword());
+		 * 
+		 * HomePage.ec.setSc(ec.getSc()); HomePage.ec.setEt(ec.getEt());
+		 * HomePage.ec.setEm(ec.getEm()); HomePage.ec.setEmf(ec.getEmf());
+		 */
 
 	}
 }

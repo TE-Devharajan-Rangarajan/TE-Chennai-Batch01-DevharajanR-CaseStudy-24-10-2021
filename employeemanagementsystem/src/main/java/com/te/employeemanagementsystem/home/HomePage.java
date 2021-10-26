@@ -1,13 +1,5 @@
 package com.te.employeemanagementsystem.home;
 
-import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
 
 import com.te.employeemanagementsystem.exceptions.InvalidCredentialsException;
 import com.te.employeemanagementsystem.exceptions.InvalidDataEnteredException;
@@ -21,8 +13,8 @@ public class HomePage {
 
 	private HomePage() {
 	}
-
-	static Scanner sc = new Scanner(System.in);
+	
+	public static final EntityClass ec = new EntityClass();
 	static int selection = 0;
 	static String ch = null;
 	static int flag = 0;
@@ -30,11 +22,9 @@ public class HomePage {
 
 	public static void homePage() {
 
-		Logger.getLogger("org.hibernate").setLevel(Level.SEVERE);
-
-		EntityManagerFactory emf = Persistence.createEntityManagerFactory("logininfo");
-		EntityManager em = emf.createEntityManager();
-		EntityTransaction et = em.getTransaction();
+		
+		
+		
 
 		while (flag != 1) {
 			
@@ -49,7 +39,7 @@ public class HomePage {
 			System.out.println(CONSTANT);
 			
 			System.out.println("\nEnter your Choice : ");
-			ch = sc.next();
+			ch = ec.getSc().next();
 			
 			if (Ensure.isNumber(ch)) {
 				
@@ -57,7 +47,7 @@ public class HomePage {
 				
 				try {
 					
-					switchSelection(emf, em, et);
+					switchSelection(ec);
 					
 				} catch (InvalidSelectionException e) {
 					
@@ -73,22 +63,22 @@ public class HomePage {
 		
 		}
 		
-		sc.close();
-		em.close();
-		emf.close();
+		ec.getSc().close();
+		ec.getEm().close();
+		ec.getEmf().close();
 		
 		System.out.println("\nSee you again... Have a nice day!!!");
 
 	}
 
-	public static void switchSelection(EntityManagerFactory emf, EntityManager em, EntityTransaction et)
+	public static void switchSelection(EntityClass ec)
 			throws InvalidSelectionException {
 
 		switch (selection) {
 		
 		case 1:
 			try {
-				Login.login(em, et, sc);
+				Login.login(ec);
 			} catch (InvalidCredentialsException | InvalidDataEnteredException e) {
 				System.out.println();
 				System.out.println(e.getMessage());
@@ -96,17 +86,17 @@ public class HomePage {
 			break;
 		
 		case 2:
-			Register.registerNewEmployee(em, et, sc);
+			Register.registerNewEmployee(ec);
 			break;
 		
 		case 3:
-			ShowDetails.showDetails(null, em, et, sc);
+			ShowDetails.showDetails(null, ec);
 			break;
 		
 		case 4:
 			System.out.println("\nSee you again... Have a nice day!!!");
-			em.close();
-			emf.close();
+			ec.getEm().close();
+			ec.getEmf().close();
 			System.exit(0);
 			break;
 		
@@ -117,23 +107,5 @@ public class HomePage {
 	
 	}
 
-	public static void continueAgain() throws InvalidSelectionException {
-		
-		System.out.println("\nDo you wish to continue? (Y/N)");
-		ch = sc.next();
-		
-		if (ch.charAt(0) == 'N' || ch.charAt(0) == 'n') {
-			
-			flag = 1;
-		
-		} else if (ch.charAt(0) == 'Y' || ch.charAt(0) == 'y') {
-
-		} else {
-			
-			throw new InvalidSelectionException("Invalid Selection!!!");
-		
-		}
-	
-	}
 
 }

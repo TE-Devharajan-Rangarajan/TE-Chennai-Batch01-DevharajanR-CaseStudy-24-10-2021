@@ -1,13 +1,9 @@
 package com.te.employeemanagementsystem.operations;
 
-import java.util.Scanner;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-
 import com.te.employeemanagementsystem.bean.LoginInfo;
 import com.te.employeemanagementsystem.exceptions.InvalidSelectionException;
 import com.te.employeemanagementsystem.exceptions.NotAValidNumberException;
+import com.te.employeemanagementsystem.home.EntityClass;
 import com.te.employeemanagementsystem.home.HomePage;
 import com.te.employeemanagementsystem.operations.delete.DeleteInfo;
 import com.te.employeemanagementsystem.operations.showdetails.ShowDetails;
@@ -25,7 +21,7 @@ public class Operations {
 	static int flag = 0;
 	static int selection = 0;
 
-	public static void operationsLoop(LoginInfo loginInfo, EntityManager em, EntityTransaction et, Scanner sc) {
+	public static void operationsLoop(LoginInfo loginInfo, EntityClass ec) {
 		
 		flag = 0;
 		flagDelete = 0;
@@ -34,7 +30,7 @@ public class Operations {
 			
 			try {
 				
-				operations(loginInfo, em, et, sc);
+				operations(loginInfo, ec);
 				
 				if (flagDelete == 1) {
 					
@@ -45,7 +41,7 @@ public class Operations {
 				
 				System.out.println("\nDo you wish to perform another operation? (Y/N)");
 				
-				ch = sc.next();
+				ch = ec.getSc().next();
 				
 				if (ch.charAt(0) == 'N' || ch.charAt(0) == 'n') {
 					
@@ -69,7 +65,7 @@ public class Operations {
 
 	}
 
-	public static void operations(LoginInfo loginInfo, EntityManager em, EntityTransaction et, Scanner sc)
+	public static void operations(LoginInfo loginInfo, EntityClass ec)
 			throws InvalidSelectionException, NotAValidNumberException {
 		
 		System.out.println();
@@ -83,7 +79,7 @@ public class Operations {
 		System.out.println(HomePage.CONSTANT);
 
 		System.out.println("\nEnter your Choice : ");
-		ch = sc.next();
+		ch = ec.getSc().next();
 		
 		if (Ensure.isNumber(ch)) {
 			
@@ -98,15 +94,15 @@ public class Operations {
 		switch (selection) {
 		
 		case 1:
-			ShowDetails.showDetails(loginInfo, em, et, sc);
+			ShowDetails.showDetails(loginInfo, ec);
 			break;
 		
 		case 2:
-			new UpdateInfo().updateRecord(loginInfo, em, et, sc);
+			new UpdateInfo().updateRecord(loginInfo, ec);
 			break;
 		
 		case 3:
-			DeleteInfo.confirmDelete(loginInfo, em, et, sc);
+			DeleteInfo.confirmDelete(loginInfo, ec);
 			flagDelete = 1;
 			break;
 		

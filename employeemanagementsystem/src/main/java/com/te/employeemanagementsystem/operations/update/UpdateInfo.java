@@ -1,11 +1,7 @@
 package com.te.employeemanagementsystem.operations.update;
 
 import java.sql.Date;
-import java.util.List;
-import java.util.Scanner;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import javax.persistence.Query;
 
 import com.te.employeemanagementsystem.bean.LoginInfo;
@@ -13,8 +9,8 @@ import com.te.employeemanagementsystem.exceptions.InvalidDataEnteredException;
 import com.te.employeemanagementsystem.exceptions.InvalidSelectionException;
 import com.te.employeemanagementsystem.exceptions.NotAValidNumberException;
 import com.te.employeemanagementsystem.exceptions.PasswordMismatchException;
+import com.te.employeemanagementsystem.home.EntityClass;
 import com.te.employeemanagementsystem.home.HomePage;
-import com.te.employeemanagementsystem.login.Login;
 import com.te.employeemanagementsystem.operations.showdetails.FindRecord;
 import com.te.employeemanagementsystem.register.Ensure;
 
@@ -22,7 +18,7 @@ public class UpdateInfo extends FindRecord {
 
 	static String ch = null;
 
-	public void updateRecord(LoginInfo loginInfo, EntityManager em, EntityTransaction et, Scanner sc)
+	public void updateRecord(LoginInfo loginInfo, EntityClass ec)
 			throws NotAValidNumberException {
 
 		System.out.println(HomePage.CONSTANT);
@@ -42,7 +38,7 @@ public class UpdateInfo extends FindRecord {
 
 		System.out.println("\nEnter your choice : ");
 		
-		ch = sc.next();
+		ch = ec.getSc().next();
 		
 		if (Ensure.isNumber(ch)) {
 			
@@ -57,11 +53,11 @@ public class UpdateInfo extends FindRecord {
 			
 			if (selection == 1) {
 				
-				new UpdatePassword().confirmPassowrdUpdate(loginInfo, em, et, sc);
+				new UpdatePassword().confirmPassowrdUpdate(loginInfo, ec);
 			
 			} else {
 				
-				findRecordFactory(loginInfo, em, et, sc);
+				findRecordFactory(loginInfo, ec);
 			
 			}
 
@@ -73,12 +69,12 @@ public class UpdateInfo extends FindRecord {
 	}
 
 	@Override
-	public void printResult(LoginInfo loginInfo, EntityManager em, EntityTransaction et) {
+	public void printResult(LoginInfo loginInfo, EntityClass ec) {
 
-		et.begin();
+		ec.getEt().begin();
 		
 		String qry = "update Info set " + columnName + " = :val where id=" + loginInfo.getId();
-		Query query = em.createQuery(qry);
+		Query query = ec.getEm().createQuery(qry);
 		
 		switch (selection) {
 		
@@ -102,16 +98,12 @@ public class UpdateInfo extends FindRecord {
 
 		int res = query.executeUpdate();
 		
-		et.commit();
 		
-		String qry1 = "from LoginInfo where id = " + loginInfo.getId();
-		Query query1 = em.createQuery(qry1);
 		
-		@SuppressWarnings("unchecked")
-		List<LoginInfo> result = query1.getResultList();
 		
-		Login.loginInfo.setId(result.get(0).getId());
-		Login.loginInfo.setPassword(result.get(0).getPassword());
+		
+		ec.getEt().commit();
+		ec.getEm().clear();
 		
 		if (res > 0) {
 			

@@ -2,16 +2,14 @@ package com.te.employeemanagementsystem.operations.showdetails;
 
 import java.sql.Date;
 import java.util.List;
-import java.util.Scanner;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import javax.persistence.Query;
 
 import com.te.employeemanagementsystem.bean.Info;
 import com.te.employeemanagementsystem.bean.LoginInfo;
 import com.te.employeemanagementsystem.exceptions.InvalidDataEnteredException;
 import com.te.employeemanagementsystem.exceptions.InvalidSelectionException;
+import com.te.employeemanagementsystem.home.EntityClass;
 import com.te.employeemanagementsystem.home.HomePage;
 import com.te.employeemanagementsystem.operations.PrintTable;
 import com.te.employeemanagementsystem.register.Ensure;
@@ -24,7 +22,7 @@ public class FindRecord {
 	public static final String[] selectionName = { "0", "id", "firstName", "lastName", "dob", "gender", "salary", "role", "mobile", "email",
 			"bloodGroup" };
 
-	public void findRecord(LoginInfo loginInfo, EntityManager em, EntityTransaction et, Scanner sc) {
+	public void findRecord(LoginInfo loginInfo, EntityClass ec) {
 
 		System.out.println(HomePage.CONSTANT);
 		System.out.println("|\tChoose the filter for your search!!!\t\t|");
@@ -43,11 +41,11 @@ public class FindRecord {
 
 		System.out.println("\nEnter your choice : ");
 
-		selection = Integer.parseInt(sc.next());
+		selection = Integer.parseInt(ec.getSc().next());
 		
 		try {
 			
-			findRecordFactory(loginInfo, em, et, sc);
+			findRecordFactory(loginInfo, ec);
 		
 		} catch (InvalidSelectionException | InvalidDataEnteredException e) {
 			
@@ -57,7 +55,7 @@ public class FindRecord {
 	
 	}
 
-	public void findRecordFactory(LoginInfo loginInfo, EntityManager em, EntityTransaction et, Scanner sc)
+	public void findRecordFactory(LoginInfo loginInfo, EntityClass ec)
 			throws InvalidSelectionException, InvalidDataEnteredException {
 
 		if (checkSelection()) {
@@ -70,15 +68,15 @@ public class FindRecord {
 		}
 
 		System.out.println("Enter the value:");
-		value = sc.next();
+		value = ec.getSc().next();
 		
-		if (!checkValue(em)) {
+		if (!checkValue(ec)) {
 			
 			throw new InvalidDataEnteredException("Invalid Value!!!!");
 		
 		}
 		
-		printResult(loginInfo, em, et);
+		printResult(loginInfo, ec);
 	
 	}
 
@@ -88,13 +86,13 @@ public class FindRecord {
 	
 	}
 
-	public boolean checkValue(EntityManager em) {
+	public boolean checkValue(EntityClass ec) {
 		
 		if (selection == 1) {
 			
 			try {
 				
-				Ensure.ensureId(value, em);
+				Ensure.ensureId(value, ec);
 				return true;
 			
 			} catch (Exception e) {
@@ -149,10 +147,11 @@ public class FindRecord {
 		}
 	}
 
-	public void printResult(LoginInfo loginInfo, EntityManager em, EntityTransaction et) {
+	public void printResult(LoginInfo loginInfo, EntityClass ec) {
 
 		String qry = "from Info where " + columnName + " = :val";
-		Query query = em.createQuery(qry);
+		
+		Query query = ec.getEm().createQuery(qry);
 		
 		switch (selection) {
 		

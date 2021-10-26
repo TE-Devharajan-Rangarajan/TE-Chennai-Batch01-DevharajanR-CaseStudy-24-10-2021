@@ -1,15 +1,13 @@
 package com.te.employeemanagementsystem.login;
 
 import java.util.List;
-import java.util.Scanner;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import javax.persistence.Query;
 
 import com.te.employeemanagementsystem.bean.LoginInfo;
 import com.te.employeemanagementsystem.exceptions.InvalidCredentialsException;
 import com.te.employeemanagementsystem.exceptions.InvalidDataEnteredException;
+import com.te.employeemanagementsystem.home.EntityClass;
 import com.te.employeemanagementsystem.home.HomePage;
 import com.te.employeemanagementsystem.operations.Operations;
 import com.te.employeemanagementsystem.register.Ensure;
@@ -22,7 +20,7 @@ public class Login {
 	static String data = null;
 	public static LoginInfo loginInfo = new LoginInfo();
 
-	public static void login(EntityManager em, EntityTransaction et, Scanner sc)
+	public static void login(EntityClass ec)
 			throws InvalidCredentialsException, InvalidDataEnteredException {
 		
 		
@@ -32,7 +30,7 @@ public class Login {
 		System.out.println(HomePage.CONSTANT);
 		
 		System.out.println("\nEnter your ID : ");
-		data = sc.next();
+		data = ec.getSc().next();
 		
 		if (Ensure.isNumber(data)) {
 
@@ -45,13 +43,13 @@ public class Login {
 		}
 		
 		System.out.println("\nEnter your Password : ");
-		loginInfo.setPassword(sc.next());
+		loginInfo.setPassword(ec.getSc().next());
 		
-		if (checkLogin(loginInfo, em)) {
+		if (checkLogin(loginInfo, ec)) {
 			
 			System.out.println("\nLogin Successful!!!\n");
 			
-			Operations.operationsLoop(loginInfo, em, et, sc);
+			Operations.operationsLoop(loginInfo, ec);
 		
 		} else {
 			
@@ -59,9 +57,9 @@ public class Login {
 		}
 	}
 
-	public static boolean checkLogin(LoginInfo loginInfo, EntityManager em) {
+	public static boolean checkLogin(LoginInfo loginInfo, EntityClass ec) {
 
-		Query query = em.createQuery("from LoginInfo");
+		Query query = ec.getEm().createQuery("from LoginInfo");
 		@SuppressWarnings("unchecked")
 		List<LoginInfo> list = query.getResultList();
 

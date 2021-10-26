@@ -1,13 +1,9 @@
 package com.te.employeemanagementsystem.register;
 
-import java.util.Scanner;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-
 import com.te.employeemanagementsystem.bean.Info;
 import com.te.employeemanagementsystem.bean.LoginInfo;
 import com.te.employeemanagementsystem.exceptions.RegistrationFailedException;
+import com.te.employeemanagementsystem.home.EntityClass;
 import com.te.employeemanagementsystem.home.HomePage;
 
 public final class Register {
@@ -16,7 +12,7 @@ public final class Register {
 
 	}
 
-	public static void registerNewEmployee(EntityManager em, EntityTransaction et, Scanner sc) {
+	public static void registerNewEmployee(EntityClass ec) {
 		
 		System.out.println("\n" + HomePage.CONSTANT);
 		System.out.println("|\t\tRegister Menu\t\t\t\t|");
@@ -24,7 +20,7 @@ public final class Register {
 		
 		try {
 			
-			registerInfo(em, et, sc);
+			registerInfo(ec);
 		
 		} catch (RegistrationFailedException e) {
 			
@@ -35,18 +31,18 @@ public final class Register {
 	
 	}
 
-	public static void registerInfo(EntityManager em, EntityTransaction et, Scanner sc)
+	public static void registerInfo(EntityClass ec)
 			throws RegistrationFailedException {
 
-		Info info = Ensure.ensureInfo(em, sc);
+		Info info = Ensure.ensureInfo(ec);
 		
 		if (info != null) {
 
-			et.begin();
-			em.persist(info);
-			et.commit();
+			ec.getEt().begin();
+			ec.getEm().persist(info);
+			ec.getEt().commit();
 		
-			registerLoginInfo(em, et);
+			registerLoginInfo(ec);
 		
 		} else {
 			
@@ -58,16 +54,16 @@ public final class Register {
 	
 	}
 
-	public static void registerLoginInfo(EntityManager em, EntityTransaction et) {
+	public static void registerLoginInfo(EntityClass ec) {
 
 		LoginInfo loginInfo = new LoginInfo();
 		
 		loginInfo.setId(Ensure.getId());
 		loginInfo.setPassword(Ensure.getPassword());
 		
-		et.begin();
-		em.persist(loginInfo);
-		et.commit();
+		ec.getEt().begin();
+		ec.getEm().persist(loginInfo);
+		ec.getEt().commit();
 
 	}
 }

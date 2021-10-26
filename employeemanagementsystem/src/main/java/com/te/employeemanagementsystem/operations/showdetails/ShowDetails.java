@@ -1,11 +1,7 @@
 package com.te.employeemanagementsystem.operations.showdetails;
 
-import java.util.Scanner;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
-
 import com.te.employeemanagementsystem.bean.LoginInfo;
+import com.te.employeemanagementsystem.home.EntityClass;
 import com.te.employeemanagementsystem.home.HomePage;
 import com.te.employeemanagementsystem.register.Ensure;
 
@@ -17,7 +13,7 @@ public class ShowDetails {
 	static int selection;
 	static String ch = null;
 
-	public static void showDetails(LoginInfo loginInfo, EntityManager em, EntityTransaction et, Scanner sc) {
+	public static void showDetails(LoginInfo loginInfo, EntityClass ec) {
 
 		System.out.println();
 		System.out.println(HomePage.CONSTANT);
@@ -29,7 +25,7 @@ public class ShowDetails {
 
 		System.out.println("\nEnter your choice : ");
 
-		ch = sc.next();
+		ch = ec.getSc().next();
 
 		if (Ensure.isNumber(ch)) {
 
@@ -38,11 +34,11 @@ public class ShowDetails {
 		
 		if (selection == 1) {
 			
-			DisplayAllRecords.displayAllRecords(em);
+			DisplayAllRecords.displayAllRecords(ec);
 		
 		} else if (selection == 2) {
 			
-			new FindRecord().findRecord(loginInfo, em, et, sc);
+			new FindRecord().findRecord(loginInfo, ec);
 		
 		} else {
 
