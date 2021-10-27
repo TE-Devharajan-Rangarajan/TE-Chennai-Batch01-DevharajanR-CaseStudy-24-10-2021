@@ -7,8 +7,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.persistence.Query;
 
@@ -32,7 +30,6 @@ public final class Ensure {
 	static Info info = new Info();
 	private static int id;
 	private static String password;
-	static Pattern p = Pattern.compile("^[A-Za-z]");
 	
 
 	public static Info ensureInfo(EntityClass ec) {
@@ -312,12 +309,7 @@ public final class Ensure {
 	
 	public static boolean isName(String str) {
 		
-		if(str == null) {
-			return false;
-		}
-		
-		Matcher m = p.matcher(str);
-		return m.matches();
+		return ((str != null) && (!str.equals("")) && (str.matches("^[a-zA-Z]*$")));
 		
 	}
 
